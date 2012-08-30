@@ -19,7 +19,6 @@ class EloquaRequest
 		// set cURL options
 		curl_setopt($this->ch, CURLOPT_URL, $baseUrl);
 		curl_setopt($this->ch, CURLOPT_USERPWD, $credentials); 
-		curl_setopt($this->ch, CURLOPT_HEADER, 1); 
 
 		// set headers
 		$headers = array('Content-type: application/json');
