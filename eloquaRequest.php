@@ -74,7 +74,8 @@ class EloquaRequest
 
 		// catch http error status
 		if (curl_getinfo($this->ch, CURLINFO_HTTP_CODE) >= 400) {
-			return ($response);
+			// handle and log the error 
+			// note : error message is in the response body
 		}
 
 		// todo : add support in constructor for contentType {xml, json}	
