@@ -19,6 +19,12 @@ class EloquaRequest
 		// set cURL options
 		curl_setopt($this->ch, CURLOPT_URL, $baseUrl);
 		curl_setopt($this->ch, CURLOPT_USERPWD, $credentials); 
+		curl_setopt($this->ch, CURLOPT_HEADER, 1); 
+		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+
+		// set headers
+		$headers = array('Content-type: application/json');
+		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
 	}
 
 	public function __destruct()
@@ -55,7 +61,7 @@ class EloquaRequest
 			case 'POST':
 			case 'PUT':
 				curl_setopt($this->ch, CURLOPT_POST, 1);
-				curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($data));
+				curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($data));
 				break;
 			case 'DELETE':
 				curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
@@ -65,11 +71,15 @@ class EloquaRequest
 				break;
 		}
 
-		// execute the request and return the result
-		$data = curl_exec($this->ch);
-	
+		$response = curl_exec($this->ch);
+
+		// catch http error status
+		if (curl_getinfo($this->ch, CURLINFO_HTTP_CODE) >= 400) {
+			return ($response);
+		}
+
 		// todo : add support in constructor for contentType {xml, json}	
-		return json_decode($data);
+		return json_decode($response);
 	}
 }
 
