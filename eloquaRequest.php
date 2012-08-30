@@ -58,8 +58,12 @@ class EloquaRequest
 
 		switch ($method) {
 			case 'POST':
+				curl_setopt($this->ch, CURLOPT_POST, 1);
+				curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($data));
+				break;
 			case 'PUT':
 				curl_setopt($this->ch, CURLOPT_POST, 1);
+				curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 				curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($data));
 				break;
 			case 'DELETE':
