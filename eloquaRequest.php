@@ -73,7 +73,8 @@ class EloquaRequest
 		$response = curl_exec($this->ch);
 
 		// catch http error status
-		if (curl_getinfo($this->ch, CURLINFO_HTTP_CODE) >= 400) {
+		if (curl_getinfo($this->ch, CURLINFO_HTTP_CODE) >= 400) 
+		{
 			// handle and log the error 
 			// note : error message is in the response body
 		}
