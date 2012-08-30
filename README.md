@@ -17,7 +17,7 @@ Eloqua PHP Request
 	include('./eloquaRequest.php');
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');	
 	$data = ...
-	$response = $eloquaRequest->post('/API/REST/1.0/assets/emails?search=Demand*&page=1&count=50&depth=minimal', $data);
+	$response = $eloquaRequest->post('/API/REST/1.0/assets/email', $data);
 	...
 	?>
 
@@ -26,7 +26,7 @@ Eloqua PHP Request
 	include('./eloquaRequest.php');
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
 	$data = ...
-	$response = $eloquaRequest->put('/API/REST/1.0/assets/emails?search=Demand*&page=1&count=50&depth=minimal', $data);
+	$response = $eloquaRequest->put('/API/REST/1.0/assets/email/123', $data);
 	...
 	?>
 
@@ -34,7 +34,7 @@ Eloqua PHP Request
 	<?php
 	include('./eloquaRequest.php');
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
-	$response = $eloquaRequest->delete('/API/REST/1.0/assets/emails?search=Demand*&page=1&count=50&depth=minimal');
+	$response = $eloquaRequest->delete('/API/REST/1.0/assets/email/123');
 	?>
 
 	
