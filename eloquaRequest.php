@@ -2,20 +2,27 @@
 
 class EloquaRequest
 {
-	public $ch;
+	private $ch;
 	public $baseUrl;
-	private $credentials;
 
 	public function __construct($site, $user, $pass, $baseUrl)
 	{
-		// initialize the cURL resource
-		$this->ch = curl_init();
-
 		// basic authentication credentials
-		$this->credentials = $site . '\\' . $user . ':' . $pass;
+		$credentials = $site . '\\' . $user . ':' . $pass;
 
 		// set the base URL for the API endpoint
 		$this->baseUrl = $baseUrl;		
+
+		// initialize the cURL resource
+		$this->ch = curl_init();
+
+		// set cURL options
+		curl_setopt($this->ch, CURLOPT_URL, $this->baseUrl);
+		curl_setopt($this->ch, CURLOPT_USERPWD, $credentials); 
+
+		// set headers
+		$headers = array('Content-type: application/json');
+		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
 	}
 
 	public function __destruct()
@@ -45,17 +52,6 @@ class EloquaRequest
 	
 	public function executeRequest($url, $method, $data=null)
 	{
-		// initialize the cURL resource
-		$this->ch = curl_init();
-
-		// set cURL options
-		curl_setopt($this->ch, CURLOPT_URL, $this->baseUrl);
-		curl_setopt($this->ch, CURLOPT_USERPWD, $this->credentials); 
-
-		// set headers
-		$headers = array('Content-type: application/json');
-		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
-
 		// set the full URL for the request
 		curl_setopt($this->ch, CURLOPT_URL, $this->baseUrl . '/' . $url);
 
@@ -64,7 +60,7 @@ class EloquaRequest
 				curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, 'GET');
 				break;
 			case 'POST':
-				curl_setopt($this->ch, CURLOPT_POST, 1);
+				curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, 'POST');
 				curl_setopt($this->ch, CURLOPT_POSTFIELDS, json_encode($data));
 				break;
 			case 'PUT':
