@@ -40,7 +40,7 @@ class EloquaRequest
 		return $this->executeRequest($url, 'POST', $data);
 	}
 
-	public function put($url, $body)
+	public function put($url, $data)
 	{
 		return $this->executeRequest($url, 'PUT', $data);
 	}
