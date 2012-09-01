@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * REST client Eloqua's API.
+ *
+ */
 class EloquaRequest
 {
 	private $ch;
 	public $baseUrl;
+    public $responseInfo;
 
 	public function __construct($site, $user, $pass, $baseUrl)
 	{
@@ -16,7 +21,7 @@ class EloquaRequest
 		// initialize the cURL resource
 		$this->ch = curl_init();
 
-		// set cURL options
+		// set cURL and credential options
 		curl_setopt($this->ch, CURLOPT_URL, $this->baseUrl);
 		curl_setopt($this->ch, CURLOPT_USERPWD, $credentials); 
 
@@ -74,14 +79,12 @@ class EloquaRequest
 				break;
 		}
 
+        // execute the request
 		$response = curl_exec($this->ch);
 
-		// catch http error status
-		if (curl_getinfo($this->ch, CURLINFO_HTTP_CODE) >= 400) 
-		{
-			// handle and log the error 
-			// note : error message is in the response body
-		}
+        // store the response info including the HTTP Status
+        // 400 and 500 status codes indicate an error or failure
+        $this->responseInfo = curl_getinfo($this->curl);
 
 		// todo : add support in constructor for contentType {xml, json}	
 		return json_decode($response);
