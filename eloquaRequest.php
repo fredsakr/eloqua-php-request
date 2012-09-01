@@ -2,7 +2,6 @@
 
 /**
  * REST client Eloqua's API.
- *
  */
 class EloquaRequest
 {
