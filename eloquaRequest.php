@@ -5,8 +5,8 @@
  */
 class EloquaRequest
 {
-	private $ch;
-	public $baseUrl;
+    private $ch;
+    public $baseUrl;
     public $responseInfo;
 
 	public function __construct($site, $user, $pass, $baseUrl)
