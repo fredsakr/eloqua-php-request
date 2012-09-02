@@ -1,7 +1,7 @@
 <?php
 
 /**
- * REST client Eloqua's API.
+ * REST client for Eloqua's API.
  */
 class EloquaRequest
 {
