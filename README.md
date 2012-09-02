@@ -19,7 +19,6 @@ Eloqua PHP Request is a client for Eloqua's REST API. It supports get, post, put
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');	
 	$data = ...
 	$response = $eloquaRequest->post('/API/REST/1.0/assets/email', $data);
-	...
 	?>
 
 ### PUT
@@ -27,7 +26,6 @@ Eloqua PHP Request is a client for Eloqua's REST API. It supports get, post, put
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
 	$data = ...
 	$response = $eloquaRequest->put('/API/REST/1.0/assets/email/123', $data);
-	...
 	?>
 
 ### DELETE
