@@ -10,28 +10,29 @@ Eloqua PHP Request is a client for Eloqua's REST API. It supports get, post, put
     
 ### GET
 	<?php
-	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
-	$response = $eloquaRequest->get('/API/REST/1.0/assets/emails?search=Demand*&page=1&count=50&depth=minimal');
+	$baseUrl = 'https://secure.eloqua.com/API/REST/1.0';
+	$eloquaRequest = new EloquaRequest('site', 'user', 'password', baseUrl);
+	$response = $eloquaRequest->get('/assets/emails?search=Demand*&page=1&count=50&depth=minimal');
 	?>
 
 ### POST
 	<?php
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');	
 	$data = ...
-	$response = $eloquaRequest->post('/API/REST/1.0/assets/email', $data);
+	$response = $eloquaRequest->post('/assets/email', $data);
 	?>
 
 ### PUT
 	<?php
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
 	$data = ...
-	$response = $eloquaRequest->put('/API/REST/1.0/assets/email/123', $data);
+	$response = $eloquaRequest->put('/assets/email/123', $data);
 	?>
 
 ### DELETE
 	<?php
 	$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
-	$response = $eloquaRequest->delete('/API/REST/1.0/assets/email/123');
+	$response = $eloquaRequest->delete('/assets/email/123');
 	?>
 
 	
