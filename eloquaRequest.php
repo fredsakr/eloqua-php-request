@@ -83,8 +83,14 @@ class EloquaRequest
 
         // store the response info including the HTTP status
         // 400 and 500 status codes indicate an error
-        $this->responseInfo = curl_getinfo($this->curl);
-
+        $this->responseInfo = curl_getinfo($this->ch);
+        $httpCode = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
+        
+        if ($httpCode > 400) 
+        {            
+            print_r($this->responseInfo);            
+        }
+        
         // todo : add support in constructor for contentType {xml, json}	
         return json_decode($response);
 	}
