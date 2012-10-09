@@ -27,6 +27,9 @@ class EloquaRequest
 		// set headers
 		$headers = array('Content-type: application/json');
 		curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
+
+		// return transfer as string
+		curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, TRUE);
 	}
 
 	public function __destruct()
