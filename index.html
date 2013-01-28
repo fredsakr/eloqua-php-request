@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Eloqua-php-request : Rest client for Eloqua's API" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Eloqua-php-request</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/fredsakr/eloqua-php-request">View on GitHub</a>
+
+          <h1 id="project_title">Eloqua-php-request</h1>
+          <h2 id="project_tagline">Rest client for Eloqua's API</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/fredsakr/eloqua-php-request/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/fredsakr/eloqua-php-request/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>eloqua-php-request</h1>
+
+<p>Eloqua PHP Request is a client for Eloqua's REST API. It supports get, post, put and delete operations. The response from each method contains the raw string response from the HTTP request and the class contains a public variable (requestInfo) containing metadata from the response, including details such as the HTTP status code.</p>
+
+<h2>Usage</h2>
+
+<pre><code>&lt;?php
+include('./eloquaRequest.php');
+?&gt;
+</code></pre>
+
+<h3>GET</h3>
+
+<pre><code>&lt;?php
+$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
+$response = $eloquaRequest-&gt;get('/assets/emails?search=Demand*&amp;page=1&amp;count=50&amp;depth=minimal');
+?&gt;
+</code></pre>
+
+<h3>POST</h3>
+
+<pre><code>&lt;?php
+$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');  
+$data = ...
+$response = $eloquaRequest-&gt;post('/assets/email', $data);
+?&gt;
+</code></pre>
+
+<h3>PUT</h3>
+
+<pre><code>&lt;?php
+$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
+$data = ...
+$response = $eloquaRequest-&gt;put('/assets/email/123', $data);
+?&gt;
+</code></pre>
+
+<h3>DELETE</h3>
+
+<pre><code>&lt;?php
+$eloquaRequest = new EloquaRequest('site', 'user', 'password', 'baseUrl');
+$response = $eloquaRequest-&gt;delete('/assets/email/123');
+?&gt;
+</code></pre>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Eloqua-php-request maintained by <a href="https://github.com/fredsakr">fredsakr</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
