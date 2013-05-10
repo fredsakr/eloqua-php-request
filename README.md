@@ -34,4 +34,27 @@ Eloqua PHP Request is a client for Eloqua's REST API. It supports get, post, put
 	$response = $eloquaRequest->delete('/assets/email/123');
 	?>
 
-	
+## Endpoint URL
+To determine the base url, you can use the following endpoint : login.eloqua.com/id
+The endpoint, when called with basic authentication, will return details about the URLs for the various APIs.
+     
+```json
+{
+    "site": {
+        "id": 42,
+        "name": "SampleInstall"
+    },
+    "user": {
+        "id": 314,
+        "username": "Fred Sakr",
+        "displayName": "Fred Sakr",
+        "firstName": "Fred",
+        "lastName": "Sakr",
+        "emailAddress": "fred.sakr@eloqua.com"
+    },
+    "urls": {
+        "base": "https://www05.secure.eloqua.com",
+        "apis"	...
+	}
+}
+```
