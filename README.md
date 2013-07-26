@@ -1,7 +1,7 @@
 eloqua-php-request
 ==================
 
-Eloqua PHP Request is a client for Eloqua's REST API. It supports get, post, put and delete operations. The response from each method contains the raw string response from the HTTP request and the class contains a public variable (requestInfo) containing metadata from the response, including details such as the HTTP status code.
+Eloqua PHP Request is a client for Eloqua's REST API. It supports GET, POST, PUT and DELETE operations. The response from each method contains the raw string response from the HTTP request and the class contains a public variable (requestInfo) containing metadata from the response, including details such as the HTTP status code.
 
 ## Usage
 	<?php
