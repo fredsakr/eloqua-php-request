@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>Get Contact via Segement</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$segment_id = 13;
+<br>
+<br>&nbsp;&nbsp;class segmentQueue {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $segmentId;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$segmentQueue = new segmentQueue;
+<br>&nbsp;&nbsp;$segmentQueue-&gt;type = "QueueInfo";
+<br>&nbsp;&nbsp;$segmentQueue-&gt;segmentId = $segment_id;
+<br>
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/2.0');
+<br>&nbsp;&nbsp;$segmentUpdate = $client-&gt;post("/assets/contact/segment/queue/" . $segment_id, $segmentQueue);
+<br>
+<br>&nbsp;&nbsp;print "Segment queue:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($segmentQueue);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print "Segment queue response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($segmentUpdate);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;for ($i = 0; $i &lt;30; $i++) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$segmentStatus = $client-&gt;get('/assets/contact/segment/' . $segment_id . '/count');
+<br>&nbsp;&nbsp;&nbsp;&nbsp;print "Segment status:&lt;br&gt;";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;print_r ($segmentStatus);
+<br>&nbsp;&nbsp;&nbsp;&nbsp;print "&lt;br&gt;";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;if ($segmentStatus-&gt;lastCalculatedAt &gt; 0) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);
+<br>&nbsp;&nbsp;}
+<br>&nbsp;&nbsp;print "&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$query_data = $client-&gt;get("/data/contact/view/100001/contacts/segment/" . $segment_id . "?orderBy=C_EmailAddress%20ASC");
+<br>&nbsp;&nbsp;print "Query data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($query_data);
+<br>?&gt;
+<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+  
+  $segment_id = 13;
+
+  class segmentQueue {
+    public $type;
+    public $segmentId;
+  }
+
+  $segmentQueue = new segmentQueue;
+  $segmentQueue->type = "QueueInfo";
+  $segmentQueue->segmentId = $segment_id;
+
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/2.0');
+  $segmentUpdate = $client->post("/assets/contact/segment/queue/" . $segment_id, $segmentQueue);
+
+  print "Segment queue:<br>";
+  print_r ($segmentQueue);
+  print "<br><br>";
+  print "Segment queue response:<br>";
+  print_r ($segmentUpdate);
+  print "<br><br>";
+
+  for ($i = 0; $i <30; $i++) {
+    $segmentStatus = $client->get('/assets/contact/segment/' . $segment_id . '/count');
+    print "Segment status:<br>";
+    print_r ($segmentStatus);
+    print "<br>";
+    if ($segmentStatus->lastCalculatedAt > 0) {
+      break;
+    }
+    sleep(2);
+  }
+  print "<br>";
+
+  $query_data = $client->get("/data/contact/view/100001/contacts/segment/" . $segment_id . "?orderBy=C_EmailAddress%20ASC");
+  print "Query data response:<br>";
+  print_r ($query_data);
+?>
+</body>
+</html>

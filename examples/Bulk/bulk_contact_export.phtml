@@ -1,0 +1,119 @@
+<html>
+<head>
+<title>Bulk Contact Export</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+<br>&nbsp;&nbsp;$endPointBase = $login-&gt;get("");
+<br>&nbsp;&nbsp;$endPointURL = $endPointBase-&gt;urls-&gt;base . "/API/bulk/1.0";
+<br>&nbsp;&nbsp;print "$endPointURL&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$dictionary = (object) array('C_EmailAddress' =&gt; '{{Contact.Field(C_EmailAddress)}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'C_FirstName' =&gt; '{{Contact.Field(C_FirstName)}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'C_LastName' =&gt; '{{Contact.Field(C_LastName)}}');
+<br>
+<br>&nbsp;&nbsp;$segment = (object) array('filterRule' =&gt; 'member',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'membershipUri' =&gt; '/contact/segment/13');
+<br>
+<br>&nbsp;&nbsp;$export = (object) array('name' =&gt; 'All Contacts',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'secondsToRetaindata' =&gt; '3600',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'filter' =&gt; $segment,
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'fields' =&gt; $dictionary);
+<br>
+<br>&nbsp;&nbsp;print "Export:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($export);
+<br>&nbsp;&nbsp;print "&lt;br&gt;";
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+<br>&nbsp;&nbsp;$response = $client-&gt;post('/contact/export', $export);
+<br>&nbsp;&nbsp;print "Export result:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($response);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$sync = (object) array('status' =&gt; 'SyncStatusType.pending',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'syncedInstanceUri' =&gt; $response-&gt;uri);
+<br>
+<br>&nbsp;&nbsp;print "Sync:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($sync);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;$syncSend = $client-&gt;POST('/sync', $sync);
+<br>&nbsp;&nbsp;print "Sync POST results:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($syncSend);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;sleep(10);
+<br>&nbsp;&nbsp;$syncStatus = $client-&gt;GET($syncSend-&gt;uri);
+<br>&nbsp;&nbsp;print "Sync status:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($syncStatus);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$get_contacts = $client-&gt;get($response-&gt;uri . "/data");
+<br>&nbsp;&nbsp;
+<br>&nbsp;&nbsp;print $response-&gt;uri . "&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($get_contacts);
+<br>
+<br>?&gt;<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  $login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+  $endPointBase = $login->get("");
+  $endPointURL = $endPointBase->urls->base . "/API/bulk/1.0";
+  print "$endPointURL<br>";
+
+  $dictionary = (object) array('C_EmailAddress' => '{{Contact.Field(C_EmailAddress)}}',
+			       'C_FirstName' => '{{Contact.Field(C_FirstName)}}',
+			       'C_LastName' => '{{Contact.Field(C_LastName)}}');
+
+  $segment = (object) array('filterRule' => 'member',
+			    'membershipUri' => '/contact/segment/13');
+
+  $export = (object) array('name' => 'All Contacts',
+			   'secondsToRetaindata' => '3600',
+			   'filter' => $segment,
+			   'fields' => $dictionary);
+
+  print "Export:<br>";
+  print_r ($export);
+  print "<br>";
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+  $response = $client->post('/contact/export', $export);
+  print "Export result:<br>";
+  print_r ($response);
+  print "<br><br>";
+
+  $sync = (object) array('status' => 'SyncStatusType.pending',
+                         'syncedInstanceUri' => $response->uri);
+
+  print "Sync:<br>";
+  print_r ($sync);
+  print "<br><br>";
+  $syncSend = $client->POST('/sync', $sync);
+  print "Sync POST results:<br>";
+  print_r ($syncSend);
+  print "<br><br>";
+
+  sleep(10);
+  $syncStatus = $client->GET($syncSend->uri);
+  print "Sync status:<br>";
+  print_r ($syncStatus);
+  print "<br><br>";
+
+  $get_contacts = $client->get($response->uri . "/data");
+
+  print $response->uri . "<br>";
+  print_r ($get_contacts);
+
+?>
+</body>
+</html>

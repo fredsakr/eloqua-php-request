@@ -1,0 +1,434 @@
+<html>
+<head>
+<title>Get Contact via Search/Query</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$subjectLine = "Subject from API";
+<br>&nbsp;&nbsp;$emailElementId = "-50002";
+<br>&nbsp;&nbsp;$emailName = "Email from API";
+<br>&nbsp;&nbsp;$segmentName = "Segment from API";
+<br>&nbsp;&nbsp;$campaignName = "Campaign from API";
+<br>
+<br>&nbsp;&nbsp;class htmlContent {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $html;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class email {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $emailFooterId;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $emailHeaderId;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $encodingId;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $emailGroupId;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $subject;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $htmlContent;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$htmlContent = new htmlContent();
+<br>&nbsp;&nbsp;$htmlContent-&gt;type = "RawHtmlContent";
+<br>&nbsp;&nbsp;$htmlContent-&gt;html = "&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Email created by API&lt;/body&gt;&lt;/html&gt;";
+<br>
+<br>&nbsp;&nbsp;$email = new email();
+<br>&nbsp;&nbsp;$email-&gt;name = $emailName;
+<br>&nbsp;&nbsp;$email-&gt;emailFooterId = 17;
+<br>&nbsp;&nbsp;$email-&gt;emailHeaderId = 7;
+<br>&nbsp;&nbsp;$email-&gt;encodingId = 1;
+<br>&nbsp;&nbsp;$email-&gt;emailGroupId = 4;
+<br>&nbsp;&nbsp;$email-&gt;folderId = "1081";
+<br>&nbsp;&nbsp;$email-&gt;subject = $subjectLine;
+<br>&nbsp;&nbsp;$email-&gt;htmlContent = $htmlContent;
+<br>
+<br>&nbsp;&nbsp;print "Email object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($email);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/2.0');
+<br>&nbsp;&nbsp;$emailCreate = $client-&gt;post("/assets/email", $email);
+<br>&nbsp;&nbsp;print "Email Create response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($emailCreate);
+<br>&nbsp;&nbsp;$emailId = $emailCreate-&gt;id;
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print "Email id: " . $emailId . "&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;class contactList {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $scope;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $membershipAdditions;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class segmentElements {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $isIncluded;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $list;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class segment {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $elements;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$members = array(300, 1, 313);
+<br>&nbsp;&nbsp;$list = new contactList();
+<br>&nbsp;&nbsp;$list-&gt;name = "List from API";
+<br>&nbsp;&nbsp;$list-&gt;scope = "local";
+<br>&nbsp;&nbsp;$list-&gt;id = "-50001";
+<br>&nbsp;&nbsp;$list-&gt;type = "ContactList";
+<br>&nbsp;&nbsp;$list-&gt;membershipAdditions = $members;
+<br>
+<br>&nbsp;&nbsp;$segmentElements = new elements();
+<br>&nbsp;&nbsp;$segmentElements-&gt;isIncluded = true;
+<br>&nbsp;&nbsp;$segmentElements-&gt;list = $list;
+<br>&nbsp;&nbsp;$segmentElements-&gt;id = "-50002";
+<br>&nbsp;&nbsp;$segmentElements-&gt;type = "ContactListSegmentElement";
+<br>
+<br>&nbsp;&nbsp;$segment = new segment();
+<br>&nbsp;&nbsp;$segment-&gt;type = "ContactSegment";
+<br>&nbsp;&nbsp;$segment-&gt;elements = $segmentElements;
+<br>&nbsp;&nbsp;$segment-&gt;id = "-50003";
+<br>&nbsp;&nbsp;$segment-&gt;folderID = "1080";
+<br>&nbsp;&nbsp;$segment-&gt;name = $segmentName;
+<br>&nbsp;&nbsp;
+<br>&nbsp;&nbsp;print "Segment object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($segment);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$segmentCreate = $client-&gt;post("/assets/contact/segment", $segment);
+<br>&nbsp;&nbsp;print "Segment Create response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($segmentCreate);
+<br>&nbsp;&nbsp;$segmentId = $segmentCreate-&gt;id;
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print "Segment id: " . $segmentId . "&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;class position {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $x;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $y;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class outputTerminals {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $terminalType;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $connectedId;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $connectedType;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class elements {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $position;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $outputTerminals;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class campaign {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $elements;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $startAt;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $endAt;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $isSyncedWithCRM;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $isIncludedInROI;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$position[0] = new position();
+<br>&nbsp;&nbsp;$position[0]-&gt;x = "100";
+<br>&nbsp;&nbsp;$position[0]-&gt;y = "75";
+<br>&nbsp;&nbsp;$position[1] = new position();
+<br>&nbsp;&nbsp;$position[1]-&gt;x = "300";
+<br>&nbsp;&nbsp;$position[1]-&gt;y = "175";
+<br>
+<br>&nbsp;&nbsp;$outputTerminals[0] = new outputTerminals();
+<br>&nbsp;&nbsp;$outputTerminals[0]-&gt;type = "CampaignOutputTerminal";
+<br>&nbsp;&nbsp;$outputTerminals[0]-&gt;terminalType = "out";
+<br>&nbsp;&nbsp;$outputTerminals[0]-&gt;connectedId = $emailElementId;
+<br>&nbsp;&nbsp;$outputTerminals[0]-&gt;connectedType = "CampaignEmail";
+<br>&nbsp;&nbsp;$outputTerminals[0]-&gt;id = "-60001";
+<br>
+<br>&nbsp;&nbsp;$elements[0] = new elements();
+<br>&nbsp;&nbsp;$elements[0]-&gt;type = "CampaignSegment";
+<br>&nbsp;&nbsp;$elements[0]-&gt;name = $segmentName;
+<br>&nbsp;&nbsp;$elements[0]-&gt;position = $position[0];
+<br>&nbsp;&nbsp;$elements[0]-&gt;id = "-50003";
+<br>&nbsp;&nbsp;$elements[0]-&gt;outputTerminals = $outputTerminals[0];
+<br>&nbsp;&nbsp;$elements[0]-&gt;segmentId = $segmentId;
+<br>
+<br>&nbsp;&nbsp;$elements[1] = new elements();
+<br>&nbsp;&nbsp;$elements[1]-&gt;type = "CampaignEmail";
+<br>&nbsp;&nbsp;$elements[1]-&gt;name = $emailName;
+<br>&nbsp;&nbsp;$elements[1]-&gt;position = $position[1];
+<br>&nbsp;&nbsp;$elements[1]-&gt;id = $emailElementId;
+<br>&nbsp;&nbsp;$elements[1]-&gt;emailId = $emailId;
+<br>&nbsp;&nbsp;$elements[1]-&gt;sendTimePeriod = "sendAllEmailAtOnce";
+<br>
+<br>&nbsp;&nbsp;$campaign = new campaign();
+<br>&nbsp;&nbsp;$campaign-&gt;id = "-50005";
+<br>&nbsp;&nbsp;$campaign-&gt;type = "Campaign";
+<br>&nbsp;&nbsp;$campaign-&gt;name = $campaignName;
+<br>&nbsp;&nbsp;$campaign-&gt;folderId = "1078";
+<br>&nbsp;&nbsp;$campaign-&gt;elements = $elements;
+<br>&nbsp;&nbsp;$campaign-&gt;startAt = time() + 25200;
+<br>&nbsp;&nbsp;$campaign-&gt;endAt = time() + 86400;
+<br>&nbsp;&nbsp;$campaign-&gt;isSyncedWithCRM = false;
+<br>&nbsp;&nbsp;$campaign-&gt;isIncludedInROI = false;
+<br>
+<br>&nbsp;&nbsp;print "Campaign object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($campaign);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$campaignCreate = $client-&gt;post("/assets/campaign", $campaign);
+<br>&nbsp;&nbsp;print "Campaign Create response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($campaignCreate);
+<br>&nbsp;&nbsp;$campaignId = $campaignCreate-&gt;id;
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print "Campaign id: " . $campaignId . "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$validateCampaign = $client-&gt;get("/assets/campaign/" . $campaignId . "/active/validationErrors");
+<br>&nbsp;&nbsp;print "Campaign validation errors response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($validateCampaign);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;class activate {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$campaignActivate = new activate();
+<br>&nbsp;&nbsp;$campaignActivate-&gt;name = "Activate from API";
+<br>
+<br>&nbsp;&nbsp;print "Activate Campaign:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($campaignActivate);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$campaignActive = $client-&gt;post("/assets/campaign/active/" . $campaignId, $campaignActivate);
+<br>&nbsp;&nbsp;print "Activate response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($campaignActive);
+<br>
+<br>?&gt;
+<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  $subjectLine = "Subject from API";
+  $emailElementId = "-50002";
+  $emailName = "Email from API";
+  $segmentName = "Segment from API";
+  $campaignName = "Campaign from API";
+
+  class htmlContent {
+    public $type;
+    public $html;
+  }
+
+  class email {
+    public $name;
+    public $emailFooterId;
+    public $emailHeaderId;
+    public $encodingId;
+    public $emailGroupId;
+    public $subject;
+    public $htmlContent;
+  }
+
+  $htmlContent = new htmlContent();
+  $htmlContent->type = "RawHtmlContent";
+  $htmlContent->html = "<html><head></head><body>Email created by API</body></html>";
+
+  $email = new email();
+  $email->name = $emailName;
+  $email->emailFooterId = 17;
+  $email->emailHeaderId = 7;
+  $email->encodingId = 1;
+  $email->emailGroupId = 4;
+  $email->folderId = "1081";
+  $email->subject = $subjectLine;
+  $email->htmlContent = $htmlContent;
+
+  print "Email object:<br>";
+  print_r ($email);
+  print "<br><br>";
+
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/2.0');
+  $emailCreate = $client->post("/assets/email", $email);
+  print "Email Create response:<br>";
+  print_r ($emailCreate);
+  $emailId = $emailCreate->id;
+  print "<br><br>";
+  print "Email id: " . $emailId . "<br>";
+
+  class contactList {
+    public $name;
+    public $scope;
+    public $id;
+    public $type;
+    public $membershipAdditions;
+  }
+
+  class segmentElements {
+    public $isIncluded;
+    public $list;
+    public $id;
+    public $type;
+  }
+
+  class segment {
+    public $type;
+    public $elements;
+    public $id;
+    public $name;
+  }
+
+  $members = array(300, 1, 313);
+  $list = new contactList();
+  $list->name = "List from API";
+  $list->scope = "local";
+  $list->id = "-50001";
+  $list->type = "ContactList";
+  $list->membershipAdditions = $members;
+  
+  $segmentElements = new elements();
+  $segmentElements->isIncluded = true;
+  $segmentElements->list = $list;
+  $segmentElements->id = "-50002";
+  $segmentElements->type = "ContactListSegmentElement";
+
+  $segment = new segment();
+  $segment->type = "ContactSegment";
+  $segment->elements = $segmentElements;
+  $segment->id = "-50003";
+  $segment->folderID = "1080";
+  $segment->name = $segmentName;
+
+  print "Segment object:<br>";
+  print_r ($segment);
+  print "<br><br>";
+
+  $segmentCreate = $client->post("/assets/contact/segment", $segment);
+  print "Segment Create response:<br>";
+  print_r ($segmentCreate);
+  $segmentId = $segmentCreate->id;
+  print "<br><br>";
+  print "Segment id: " . $segmentId . "<br>";
+
+  class position {
+    public $x;
+    public $y;
+  }
+
+  class outputTerminals {
+    public $type;
+    public $terminalType;
+    public $connectedId;
+    public $connectedType;
+    public $id;
+  }
+
+  class elements {
+    public $type;
+    public $name;
+    public $position;
+    public $id;
+    public $outputTerminals;
+  }
+
+  class campaign {
+    public $id;
+    public $type;
+    public $name;
+    public $elements;
+    public $startAt;
+    public $endAt;
+    public $isSyncedWithCRM;
+    public $isIncludedInROI;
+  }
+
+  $position[0] = new position();
+  $position[0]->x = "100";
+  $position[0]->y = "75";
+  $position[1] = new position();
+  $position[1]->x = "300";
+  $position[1]->y = "175";
+
+  $outputTerminals[0] = new outputTerminals();
+  $outputTerminals[0]->type = "CampaignOutputTerminal";
+  $outputTerminals[0]->terminalType = "out";
+  $outputTerminals[0]->connectedId = $emailElementId;
+  $outputTerminals[0]->connectedType = "CampaignEmail";
+  $outputTerminals[0]->id = "-60001";
+
+  $elements[0] = new elements();
+  $elements[0]->type = "CampaignSegment";
+  $elements[0]->name = $segmentName;
+  $elements[0]->position = $position[0];
+  $elements[0]->id = "-50003";
+  $elements[0]->outputTerminals = $outputTerminals[0];
+  $elements[0]->segmentId = $segmentId;
+
+  $elements[1] = new elements();
+  $elements[1]->type = "CampaignEmail";
+  $elements[1]->name = $emailName;
+  $elements[1]->position = $position[1];
+  $elements[1]->id = $emailElementId;
+  $elements[1]->emailId = $emailId;
+  $elements[1]->sendTimePeriod = "sendAllEmailAtOnce";
+
+  $campaign = new campaign();
+  $campaign->id = "-50005";
+  $campaign->type = "Campaign";
+  $campaign->name = $campaignName;
+  $campaign->folderId = "1078";
+  $campaign->elements = $elements;
+  $campaign->startAt = time() + 25200;
+  $campaign->endAt = time() + 86400;
+  $campaign->isSyncedWithCRM = false;
+  $campaign->isIncludedInROI = false;
+
+  print "Campaign object:<br>";
+  print_r ($campaign);
+  print "<br><br>";
+
+  $campaignCreate = $client->post("/assets/campaign", $campaign);
+  print "Campaign Create response:<br>";
+  print_r ($campaignCreate);
+  $campaignId = $campaignCreate->id;
+  print "<br><br>";
+  print "Campaign id: " . $campaignId . "<br><br>";
+
+  $validateCampaign = $client->get("/assets/campaign/" . $campaignId . "/active/validationErrors");
+  print "Campaign validation errors response:<br>";
+  print_r ($validateCampaign);
+  print "<br><br>";
+
+  class activate {
+    public $name;
+  }
+
+  $campaignActivate = new activate();
+  $campaignActivate->name = "Activate from API";
+  
+  print "Activate Campaign:<br>";
+  print_r ($campaignActivate);
+  print "<br><br>";
+
+  $campaignActive = $client->post("/assets/campaign/active/" . $campaignId, $campaignActivate);
+  print "Activate response:<br>";
+  print_r ($campaignActive);
+
+?>
+</body>
+</html>

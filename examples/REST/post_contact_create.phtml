@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>Get Contact via Search/Query</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+<br>&nbsp;&nbsp;$endPointBase = $login-&gt;get("");
+<br>&nbsp;&nbsp;$endPointURL = $endPointBase-&gt;urls-&gt;base . "/API/REST/2.0";
+<br>&nbsp;&nbsp;print "$endPointURL&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;class fieldValues {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $value;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class Contact {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $emailAddress;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $firstName;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $lastName;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $fieldValues;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$fieldValues[0] = new fieldValues;
+<br>&nbsp;&nbsp;$fieldValues[0]-&gt;type = "FieldValue";
+<br>&nbsp;&nbsp;$fieldValues[0]-&gt;id = 100205;
+<br>&nbsp;&nbsp;$fieldValues[0]-&gt;value = "Male - API";
+<br>&nbsp;&nbsp;$fieldValues[1] = new fieldValues;
+<br>&nbsp;&nbsp;$fieldValues[1]-&gt;type = "FieldValue";
+<br>&nbsp;&nbsp;$fieldValues[1]-&gt;id = 100206;
+<br>&nbsp;&nbsp;$fieldValues[1]-&gt;value = "Validity - API";
+<br>&nbsp;&nbsp;$fieldValues[2] = new fieldValues;
+<br>&nbsp;&nbsp;$fieldValues[2]-&gt;type = "FieldValue";
+<br>&nbsp;&nbsp;$fieldValues[2]-&gt;id = 100192;
+<br>&nbsp;&nbsp;$fieldValues[2]-&gt;value = "2";
+<br>
+<br>&nbsp;&nbsp;$contact = new Contact();
+<br>&nbsp;&nbsp;$contact-&gt;emailAddress = "1001@1000.com";
+<br>&nbsp;&nbsp;$contact-&gt;firstName = "FnameUpdated1000";
+<br>&nbsp;&nbsp;$contact-&gt;lastName = "LnameUpdated1000";
+<br>&nbsp;&nbsp;$contact-&gt;province = "OR";
+<br>&nbsp;&nbsp;$contact-&gt;fieldValues = $fieldValues;
+<br>
+<br>&nbsp;&nbsp;print "PHP Contact Object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($contact);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print "JSON Contact Object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print json_encode($contact);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+<br>&nbsp;&nbsp;$import_data = $client-&gt;post("/data/contact", $contact);
+<br>&nbsp;&nbsp;print "Import data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($import_data);
+<br>?&gt;
+<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  $login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+  $endPointBase = $login->get("");
+  $endPointURL = $endPointBase->urls->base . "/API/REST/2.0";
+  print "$endPointURL<br>";
+
+  class fieldValues {
+    public $type;
+    public $id;
+    public $value;
+  }
+
+  class Contact {
+    public $emailAddress;
+    public $firstName;
+    public $lastName;
+    public $fieldValues;
+  }
+
+  $fieldValues[0] = new fieldValues;
+  $fieldValues[0]->type = "FieldValue";
+  $fieldValues[0]->id = 100205;
+  $fieldValues[0]->value = "Male - API";
+  $fieldValues[1] = new fieldValues;
+  $fieldValues[1]->type = "FieldValue";
+  $fieldValues[1]->id = 100206;
+  $fieldValues[1]->value = "Validity - API";
+  $fieldValues[2] = new fieldValues;
+  $fieldValues[2]->type = "FieldValue";
+  $fieldValues[2]->id = 100192;
+  $fieldValues[2]->value = "2";
+
+  $contact = new Contact();
+  $contact->emailAddress = "1001@1000.com";
+  $contact->firstName = "FnameUpdated1000";
+  $contact->lastName = "LnameUpdated1000";
+  $contact->province = "OR";
+  $contact->fieldValues = $fieldValues;
+ 
+  print "PHP Contact Object:<br>";
+  print_r ($contact);
+  print "<br><br>";
+  print "JSON Contact Object:<br>";
+  print json_encode($contact);
+  print "<br><br>";
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+  $import_data = $client->post("/data/contact", $contact);
+  print "Import data response:<br>";
+  print_r ($import_data);
+?>
+</body>
+</html>

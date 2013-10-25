@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>Get Contact Fields</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+<br>&nbsp;&nbsp;$endPointBase = $login-&gt;get("");
+<br>&nbsp;&nbsp;$endPointURL = $endPointBase-&gt;urls-&gt;base . "/API/REST/2.0";
+<br>&nbsp;&nbsp;print "$endPointURL&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+<br>&nbsp;&nbsp;$query_data = $client-&gt;get("/assets/contact/fields?depth=complete");
+<br>&nbsp;&nbsp;print "Query data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($query_data);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print "Query data response (JSON):&lt;br&gt;";
+<br>&nbsp;&nbsp;print json_encode($query_data);
+<br>
+<br>?&gt;<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  $login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+  $endPointBase = $login->get("");
+  $endPointURL = $endPointBase->urls->base . "/API/REST/2.0";
+  print "$endPointURL<br>";
+
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+  $query_data = $client->get("/assets/contact/fields?depth=complete");
+  print "Query data response:<br>";
+  print_r ($query_data);
+  print "<br><br>";
+  print "Query data response (JSON):<br>";
+  print json_encode($query_data);
+
+?>
+</body>
+</html>
