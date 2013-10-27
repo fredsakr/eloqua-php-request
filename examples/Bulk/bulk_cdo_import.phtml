@@ -1,0 +1,213 @@
+<html>
+<head>
+<title>Get Contact via Search/Query</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+<br>&nbsp;&nbsp;$endPointBase = $login-&gt;get("");
+<br>&nbsp;&nbsp;$endPointURL = $endPointBase-&gt;urls-&gt;base . "/API/bulk/1.0";
+<br>&nbsp;&nbsp;print "$endPointURL&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$cdo_id = 14;
+<br>
+<br>&nbsp;&nbsp;$fields = (object) array('email1' =&gt; '{{CustomObject[' . $cdo_id . '].Field[80]}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'field11' =&gt; '{{CustomObject[' . $cdo_id . '].Field[81]}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'field21' =&gt; '{{CustomObject[' . $cdo_id . '].Field[82]}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'EmailAddressField' =&gt; '{{CustomObject[' . $cdo_id . '].Contact.Field(C_EmailAddress)}}');
+<br>
+<br>&nbsp;&nbsp;print "Field definition:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($fields);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;class cdo {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $email1;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $field11;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $field21;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $EmailAddressField;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class syncActions {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $destinationUri;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $action;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class import {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $isSyncTriggeredOnImport;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $updateRule;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $identifierFieldName;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $secondsToRetainData;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $fields;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$import = new import();
+<br>&nbsp;&nbsp;$import-&gt;isSyncTriggeredOnImport = "true";
+<br>&nbsp;&nbsp;$import-&gt;name = "Bulk Import";
+<br>&nbsp;&nbsp;$import-&gt;updateRule = "always";
+<br>&nbsp;&nbsp;$import-&gt;identifierFieldName = "email1";
+<br>&nbsp;&nbsp;$import-&gt;secondsToRetainData = "3600";
+<br>&nbsp;&nbsp;$import-&gt;fields = $fields;
+<br>&nbsp;&nbsp;
+<br>&nbsp;&nbsp;print "Import object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($import);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;Import JSON:&lt;br&gt;";
+<br>&nbsp;&nbsp;print json_encode($import, JSON_PRETTY_PRINT);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;for ($i = 0; $i &lt; 100; $i++) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$cdo[$i] = new cdo();
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$cdo[$i]-&gt;email1 = $i . "@" . $i . ".com";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$cdo[$i]-&gt;field11 = "Fname" . $i . "API";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$cdo[$i]-&gt;field21 = "Lname" . $i . "Updated";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$cdo[$i]-&gt;EmailAddressField = $cdo[$i]-&gt;email1;
+<br>&nbsp;&nbsp;}
+<br>
+<br>#&nbsp;&nbsp;$cdo[200] = new cdo();
+<br>#&nbsp;&nbsp;$cdo[200]-&gt;email1 = "@200.com";
+<br>#&nbsp;&nbsp;$cdo[200]-&gt;field11 = "Fname200API";
+<br>#&nbsp;&nbsp;$cdo[200]-&gt;field21 = "Lname200Updated";
+<br>#&nbsp;&nbsp;$cdo[200]-&gt;EmailAddressField = $cdo[200]-&gt;email1;
+<br>
+<br>&nbsp;&nbsp;print "JSON CDO array:&lt;br&gt;";
+<br>&nbsp;&nbsp;print json_encode($cdo, JSON_PRETTY_PRINT);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+<br>&nbsp;&nbsp;$response = $client-&gt;post('/customObject/' . $cdo_id . '/import', $import);
+<br>&nbsp;&nbsp;print "Import result:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($response);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$import_uri = $response-&gt;uri;
+<br>&nbsp;&nbsp;print "Import URI:&lt;br&gt;$import_uri&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$import_data = $client-&gt;post($import_uri . "/data", $cdo);
+<br>&nbsp;&nbsp;print "Import data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($import_data);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print $import_data-&gt;uri . "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$client2 = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+<br>&nbsp;&nbsp;print "Sync status:&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;for ($i = 0; $i &lt; 20 ; $i++) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$syncStatus = $client2-&gt;get($import_data-&gt;uri);
+<br>&nbsp;&nbsp;&nbsp;&nbsp;print_r ($syncStatus);
+<br>&nbsp;&nbsp;&nbsp;&nbsp;if ($syncStatus-&gt;status == "success") {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;print "&lt;br&gt;";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(2);
+<br>&nbsp;&nbsp;}
+<br>?&gt;<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  $login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+  $endPointBase = $login->get("");
+  $endPointURL = $endPointBase->urls->base . "/API/bulk/1.0";
+  print "$endPointURL<br>";
+
+  $cdo_id = 14;
+
+  $fields = (object) array('email1' => '{{CustomObject[' . $cdo_id . '].Field[80]}}',
+			   'field11' => '{{CustomObject[' . $cdo_id . '].Field[81]}}',
+			   'field21' => '{{CustomObject[' . $cdo_id . '].Field[82]}}',
+			   'EmailAddressField' => '{{CustomObject[' . $cdo_id . '].Contact.Field(C_EmailAddress)}}');
+
+  print "Field definition:<br>";
+  print_r ($fields);
+  print "<br><br>";
+
+  class cdo {
+    public $email1;
+    public $field11;
+    public $field21;
+    public $EmailAddressField;
+  }
+
+  class syncActions {
+    public $destinationUri;
+    public $action;
+  }
+
+  class import {
+    public $isSyncTriggeredOnImport;
+    public $name;
+    public $updateRule;
+    public $identifierFieldName;
+    public $secondsToRetainData;
+    public $fields;
+  }
+ 
+  $import = new import();
+  $import->isSyncTriggeredOnImport = "true";
+  $import->name = "Bulk Import";
+  $import->updateRule = "always";
+  $import->identifierFieldName = "email1";
+  $import->secondsToRetainData = "3600";
+  $import->fields = $fields;
+
+  print "Import object:<br>";
+  print_r ($import);
+  print "<br><br>Import JSON:<br>";
+  print json_encode($import, JSON_PRETTY_PRINT);
+  print "<br><br>";
+
+  for ($i = 0; $i < 100; $i++) {
+    $cdo[$i] = new cdo();
+    $cdo[$i]->email1 = $i . "@" . $i . ".com";
+    $cdo[$i]->field11 = "Fname" . $i . "API";
+    $cdo[$i]->field21 = "Lname" . $i . "Updated";
+    $cdo[$i]->EmailAddressField = $cdo[$i]->email1;
+  }
+
+#  $cdo[200] = new cdo();
+#  $cdo[200]->email1 = "@200.com";
+#  $cdo[200]->field11 = "Fname200API";
+#  $cdo[200]->field21 = "Lname200Updated";
+#  $cdo[200]->EmailAddressField = $cdo[200]->email1;
+
+  print "JSON CDO array:<br>";
+  print json_encode($cdo, JSON_PRETTY_PRINT);
+  print "<br><br>";
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+  $response = $client->post('/customObject/' . $cdo_id . '/import', $import);
+  print "Import result:<br>";
+  print_r ($response);
+  print "<br><br>";
+
+  $import_uri = $response->uri;
+  print "Import URI:<br>$import_uri<br><br>";
+ 
+  $import_data = $client->post($import_uri . "/data", $cdo);
+  print "Import data response:<br>";
+  print_r ($import_data);
+  print "<br><br>";
+  print $import_data->uri . "<br><br>";
+
+  $client2 = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+  print "Sync status:<br>";
+
+  for ($i = 0; $i < 20 ; $i++) {
+    $syncStatus = $client2->get($import_data->uri);
+    print_r ($syncStatus);
+    if ($syncStatus->status == "success") {
+      break;
+    }
+    print "<br>";
+    sleep(2);
+  }
+?>
+</body>
+</html>

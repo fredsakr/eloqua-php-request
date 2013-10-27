@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>Create Account</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;class fieldValues {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $type;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $value;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class Account {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $address1;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $address2;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $address3;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $businessPhone;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $city;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $country;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $postalCode;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $province;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $fieldValues;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$fieldValues[0] = new fieldValues;
+<br>&nbsp;&nbsp;$fieldValues[0]-&gt;type = "FieldValue";
+<br>&nbsp;&nbsp;$fieldValues[0]-&gt;id = 100169;
+<br>&nbsp;&nbsp;$fieldValues[0]-&gt;value = "Annual Rev - API";
+<br>&nbsp;&nbsp;$fieldValues[1] = new fieldValues;
+<br>&nbsp;&nbsp;$fieldValues[1]-&gt;type = "FieldValue";
+<br>&nbsp;&nbsp;$fieldValues[1]-&gt;id = 100170;
+<br>&nbsp;&nbsp;$fieldValues[1]-&gt;value = "Fax - API";
+<br>&nbsp;&nbsp;$fieldValues[2] = new fieldValues;
+<br>&nbsp;&nbsp;$fieldValues[2]-&gt;type = "FieldValue";
+<br>&nbsp;&nbsp;$fieldValues[2]-&gt;id = 100115;
+<br>&nbsp;&nbsp;$fieldValues[2]-&gt;value = "ZZ - D&B Total Employees - API";
+<br>
+<br>&nbsp;&nbsp;$account = new Account();
+<br>&nbsp;&nbsp;$account-&gt;name = "Company - API";
+<br>&nbsp;&nbsp;$account-&gt;address1 = "Address 1 - API";
+<br>&nbsp;&nbsp;$account-&gt;city = "City - API";
+<br>&nbsp;&nbsp;$account-&gt;province = "OR";
+<br>&nbsp;&nbsp;$account-&gt;fieldValues = $fieldValues;
+<br>
+<br>&nbsp;&nbsp;print "PHP Account Object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($account);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print "JSON Account Object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print json_encode($account);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/2.0');
+<br>&nbsp;&nbsp;$import_data = $client-&gt;post("/data/account", $account);
+<br>&nbsp;&nbsp;print "Import data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($import_data);
+<br>?&gt;
+<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  class fieldValues {
+    public $type;
+    public $id;
+    public $value;
+  }
+
+  class Account {
+    public $name;
+    public $address1;
+    public $address2;
+    public $address3;
+    public $businessPhone;
+    public $city;
+    public $country;
+    public $postalCode;
+    public $province;
+    public $fieldValues;
+  }
+
+  $fieldValues[0] = new fieldValues;
+  $fieldValues[0]->type = "FieldValue";
+  $fieldValues[0]->id = 100169;
+  $fieldValues[0]->value = "Annual Rev - API";
+  $fieldValues[1] = new fieldValues;
+  $fieldValues[1]->type = "FieldValue";
+  $fieldValues[1]->id = 100170;
+  $fieldValues[1]->value = "Fax - API";
+  $fieldValues[2] = new fieldValues;
+  $fieldValues[2]->type = "FieldValue";
+  $fieldValues[2]->id = 100115;
+  $fieldValues[2]->value = "ZZ - D&B Total Employees - API";
+
+  $account = new Account();
+  $account->name = "Company - API";
+  $account->address1 = "Address 1 - API";
+  $account->city = "City - API";
+  $account->province = "OR";
+  $account->fieldValues = $fieldValues;
+ 
+  print "PHP Account Object:<br>";
+  print_r ($account);
+  print "<br><br>";
+  print "JSON Account Object:<br>";
+  print json_encode($account);
+  print "<br><br>";
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/2.0');
+  $import_data = $client->post("/data/account", $account);
+  print "Import data response:<br>";
+  print_r ($import_data);
+?>
+</body>
+</html>

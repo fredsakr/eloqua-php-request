@@ -1,0 +1,210 @@
+<html>
+<head>
+<title>Get Contact via Search/Query</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+<br>&nbsp;&nbsp;$endPointBase = $login-&gt;get("");
+<br>&nbsp;&nbsp;$endPointURL = $endPointBase-&gt;urls-&gt;base . "/API/bulk/1.0";
+<br>&nbsp;&nbsp;print "$endPointURL&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$fields = (object) array('C_EmailAddress' =&gt; '{{Contact.Field(C_EmailAddress)}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'C_FirstName' =&gt; '{{Contact.Field(C_FirstName)}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'C_LastName' =&gt; '{{Contact.Field(C_LastName)}}',
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 'C_Company' =&gt; '{{Contact.Field(C_Company)}}');
+<br>
+<br>&nbsp;&nbsp;class Contact {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $C_EmailAddress;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $C_FirstName;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $C_LastName;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $C_Company;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class syncActions {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $destinationUri;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $action;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;class import {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $syncActions;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $isSyncTriggeredOnImport;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $updateRule;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $identifierFieldName;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $secondsToRetainData;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $fields;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$syncActions = new syncActions();
+<br>&nbsp;&nbsp;$syncActions-&gt;destinationUri = "/contact/list/118";
+<br>&nbsp;&nbsp;$syncActions-&gt;action = "add";
+<br>#&nbsp;&nbsp;$syncActions = new syncActions();
+<br>#&nbsp;&nbsp;$syncActions-&gt;destinationUri = "/email/group/19";
+<br>#&nbsp;&nbsp;$syncActions-&gt;action = "subscribe";
+<br>
+<br>&nbsp;&nbsp;$import = new import();
+<br>&nbsp;&nbsp;$import-&gt;syncActions = $syncActions;
+<br>&nbsp;&nbsp;$import-&gt;isSyncTriggeredOnImport = "true";
+<br>&nbsp;&nbsp;$import-&gt;name = "Bulk Import";
+<br>&nbsp;&nbsp;$import-&gt;updateRule = "always";
+<br>&nbsp;&nbsp;$import-&gt;identifierFieldName = "C_EmailAddress";
+<br>&nbsp;&nbsp;$import-&gt;secondsToRetainData = "3600";
+<br>&nbsp;&nbsp;$import-&gt;fields = $fields;
+<br>
+<br>&nbsp;&nbsp;print "Import object:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($import);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;Import JSON:";
+<br>&nbsp;&nbsp;print json_encode($import, JSON_PRETTY_PRINT);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$contacts = new ArrayObject();
+<br>
+<br>&nbsp;&nbsp;for ($i = 0; $i &lt; 2; $i++) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$contact[$i] = new Contact();
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$contact[$i]-&gt;C_EmailAddress = $i . "@" . $i . ".com";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$contact[$i]-&gt;C_FirstName = "Fname" . $i;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$contact[$i]-&gt;C_LastName = "Lname" . $i;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$contact[$i]-&gt;C_Company = "Company" . $i;
+<br>&nbsp;&nbsp;}
+<br>&nbsp;&nbsp;print "JSON contact array:&lt;br&gt;";
+<br>&nbsp;&nbsp;print json_encode($contact, JSON_PRETTY_PRINT);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+<br>&nbsp;&nbsp;$response = $client-&gt;post('/contact/import', $import);
+<br>&nbsp;&nbsp;print "Import result:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($response);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$import_uri = $response-&gt;uri;
+<br>&nbsp;&nbsp;print "Import URI:&lt;br&gt;$import_uri&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$import_data = $client-&gt;post($import_uri . "/data", $contact);
+<br>&nbsp;&nbsp;print "Import data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($import_data);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;print $import_data-&gt;uri . "&lt;br&gt;&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;$client2 = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+<br>&nbsp;&nbsp;print "Sync status:&lt;br&gt;";
+<br>
+<br>&nbsp;&nbsp;for ($i = 0; $i &lt; 5 ; $i++) {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;$syncStatus = $client2-&gt;get($import_data-&gt;uri);
+<br>&nbsp;&nbsp;&nbsp;&nbsp;print_r ($syncStatus);
+<br>&nbsp;&nbsp;&nbsp;&nbsp;if ($syncStatus-&gt;status == "success") {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;}
+<br>&nbsp;&nbsp;&nbsp;&nbsp;print "&lt;br&gt;";
+<br>&nbsp;&nbsp;&nbsp;&nbsp;sleep(1);
+<br>&nbsp;&nbsp;}
+<br>?&gt;
+<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  $login = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, "https://login.eloqua.com/id");
+  $endPointBase = $login->get("");
+  $endPointURL = $endPointBase->urls->base . "/API/bulk/1.0";
+  print "$endPointURL<br>";
+
+  $fields = (object) array('C_EmailAddress' => '{{Contact.Field(C_EmailAddress)}}',
+			   'C_FirstName' => '{{Contact.Field(C_FirstName)}}',
+			   'C_LastName' => '{{Contact.Field(C_LastName)}}',
+			   'C_Company' => '{{Contact.Field(C_Company)}}');
+
+  class Contact {
+    public $C_EmailAddress;
+    public $C_FirstName;
+    public $C_LastName;
+    public $C_Company;
+  }
+
+  class syncActions {
+    public $destinationUri;
+    public $action;
+  }
+
+  class import {
+    public $syncActions;
+    public $isSyncTriggeredOnImport;
+    public $name;
+    public $updateRule;
+    public $identifierFieldName;
+    public $secondsToRetainData;
+    public $fields;
+  }
+
+  $syncActions = new syncActions();
+  $syncActions->destinationUri = "/contact/list/118";
+  $syncActions->action = "add";
+#  $syncActions = new syncActions();
+#  $syncActions->destinationUri = "/email/group/19";
+#  $syncActions->action = "subscribe";
+ 
+  $import = new import();
+  $import->syncActions = $syncActions;
+  $import->isSyncTriggeredOnImport = "true";
+  $import->name = "Bulk Import";
+  $import->updateRule = "always";
+  $import->identifierFieldName = "C_EmailAddress";
+  $import->secondsToRetainData = "3600";
+  $import->fields = $fields;
+
+  print "Import object:<br>";
+  print_r ($import);
+  print "<br><br>Import JSON:";
+  print json_encode($import, JSON_PRETTY_PRINT);
+  print "<br><br>";
+
+  $contacts = new ArrayObject();
+
+  for ($i = 0; $i < 2; $i++) {
+    $contact[$i] = new Contact();
+    $contact[$i]->C_EmailAddress = $i . "@" . $i . ".com";
+    $contact[$i]->C_FirstName = "Fname" . $i;
+    $contact[$i]->C_LastName = "Lname" . $i;
+    $contact[$i]->C_Company = "Company" . $i;
+  }
+  print "JSON contact array:<br>";
+  print json_encode($contact, JSON_PRETTY_PRINT);
+  print "<br><br>";
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+  $response = $client->post('/contact/import', $import);
+  print "Import result:<br>";
+  print_r ($response);
+  print "<br><br>";
+  
+  $import_uri = $response->uri;
+  print "Import URI:<br>$import_uri<br><br>";
+  
+  $import_data = $client->post($import_uri . "/data", $contact);
+  print "Import data response:<br>";
+  print_r ($import_data);
+  print "<br><br>";
+  print $import_data->uri . "<br><br>";
+
+  $client2 = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, $endPointURL);
+  print "Sync status:<br>";
+
+  for ($i = 0; $i < 5 ; $i++) {
+    $syncStatus = $client2->get($import_data->uri);
+    print_r ($syncStatus);
+    if ($syncStatus->status == "success") {
+      break;
+    }
+    print "<br>";
+    sleep(1);
+  }
+?>
+</body>
+</html>

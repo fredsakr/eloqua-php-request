@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>Update Account</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;class Account {
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $id;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;public $name;
+<br>&nbsp;&nbsp;}
+<br>
+<br>&nbsp;&nbsp;$account = new Account();
+<br>&nbsp;&nbsp;$account-&gt;id = "25";
+<br>
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/1.0');
+<br>&nbsp;&nbsp;$account-&gt;name = "Test Account Name Updated API";
+<br>
+<br>&nbsp;&nbsp;print_r ($account);
+<br>&nbsp;&nbsp;print "&lt;br&gt;&lt;br&gt;";
+<br>&nbsp;&nbsp;$import_data = $client-&gt;put("/data/account/" . $account-&gt;id, $account);
+<br>&nbsp;&nbsp;print "Import data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($import_data);
+<br>?&gt;
+<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+
+  class Account {
+    public $id;
+    public $name;
+  }
+
+  $account = new Account();
+  $account->id = "25";
+
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/1.0');
+  $account->name = "Test Account Name Updated API";
+  
+  print_r ($account);
+  print "<br><br>";
+  $import_data = $client->put("/data/account/" . $account->id, $account);
+  print "Import data response:<br>";
+  print_r ($import_data);
+?>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>Get Contact via Search/Query</title>
+</head>
+<body>
+<b>PHP Code:</b><br>
+&lt;?php
+<br>
+<br>&nbsp;&nbsp;include_once ("/var/www/localhost/files/eloqua.inc");
+<br>&nbsp;&nbsp;include_once ("eloquaRequest.php");
+<br>
+<br>&nbsp;&nbsp;$client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/1.0');
+<br>&nbsp;&nbsp;$query_data = $client-&gt;get("/assets/account/fields?depth=complete");
+<br>&nbsp;&nbsp;print "Query data response:&lt;br&gt;";
+<br>&nbsp;&nbsp;print_r ($query_data);
+<br>?&gt;<br>
+<br>
+<br>
+<b>PHP Code output:</b><br>
+<?php
+
+  include_once ("/var/www/localhost/files/eloqua.inc");
+  include_once ("eloquaRequest.php");
+  
+  $client = new EloquaRequest($eloqua_site, $eloqua_userA, $eloqua_pass, 'https://secure.eloqua.com/API/rest/1.0');
+  $query_data = $client->get("/assets/account/fields?depth=complete");
+  print "Query data response:<br>";
+  print_r ($query_data);
+?>
+</body>
+</html>
